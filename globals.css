@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Las variables --font-geist-sans y --font-geist-mono son inyectadas por next/font 
+     cuando se usa la opción 'variable', por lo que no necesitan ser definidas aquí. */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.wallet{
+  display: flex;  /*Permite alinear el botón a donde se indique.*/
+  /*align-items: right;*/
+  justify-content: right; /*Manda los elementos al final del contenedor flex.*/
+  margin-top: 10px;
+}
