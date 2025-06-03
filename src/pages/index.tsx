@@ -1,8 +1,14 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+//Se importa el ConnectionButton para MetaMask
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+//Importar RainbowKit para el botón de conexión
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Address, parseEther, zeroAddress } from 'viem'
+
+
 // import { useTomo } from '@tomo-inc/tomo-web-sdk'; // Importar useTomo
 
 // Para animaciones sutiles, considera instalar y usar framer-motion
@@ -37,9 +43,6 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" /> {/* Make sure you have a favicon */}
       </Head>
 
-      {/* Aplicamos las fuentes Geist al body o a un contenedor principal si es necesario */}
-      {/* Aquí se asume que las variables CSS --font-geist-sans y --font-geist-mono están disponibles globalmente */}
-      {/* o puedes aplicar geistSans.className y geistMono.className a elementos específicos */}
       <div className={`min-h-screen bg-gray-900 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans overflow-x-hidden`}>
         {/* Header/Nav (Simplified for now) */}
         <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
@@ -59,9 +62,12 @@ export default function HomePage() {
                   Register Trademark
                 </span>
               </Link>
-            </nav>
-          </div>
+              </nav>
+          </div>  
+          <div className="wallet"><ConnectButton /></div>  
         </header>
+
+                      
 
         {/* Hero Section */}
         {/* Sugerencia de Imagen/Animación: Un logo moderno y abstracto (quizás con una 'M' o '3') 
