@@ -1,8 +1,7 @@
-import { StoryClient } from '@story-protocol/core-sdk';
-import { storyConfig, storyClient as existingClient } from '../utils/storyConfig';
+import { storyConfig, client } from '../utils/storyConfig';
 
 // Re-exportar el cliente existente para mantener consistencia
-export const storyClient = existingClient;
+export { storyClient };
 
 // Función helper para obtener el cliente
 export const getStoryClient = () => {

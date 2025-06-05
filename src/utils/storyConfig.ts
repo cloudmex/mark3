@@ -4,28 +4,20 @@
 import { aeneid, mainnet, StoryClient, StoryConfig } from '@story-protocol/core-sdk'
 import { Chain, createPublicClient, createWalletClient, http, WalletClient } from 'viem'
 import { privateKeyToAccount, Address, Account } from 'viem/accounts'
-import dotenv from 'dotenv'
-import { networkInfo } from '@/pages/api/hello';
-
-//Función para la configuración de las variables de entorno.
-dotenv.config(); 
 
 //Configuración de los tipos de red.
-//Aeneid es la red de prueba de Story Protocol. Por otro lado, mainnet es la red principal.
+
+// Network configuration types
 type NetworkType = 'aeneid' | 'mainnet'
 
-//Configuración para agregar las redes.
-export interface NetworkConfig {
-  rpcProviderUrl: string
-  blockExplorer: string
-  protocolExplorer: string
-  defaultNFTContractAddress: Address | null
-  defaultSPGNFTContractAddress: Address | null
-  chain: Chain
-};
-
-// Configuración del cliente de Story Protocol
-
+interface NetworkConfig {
+    rpcProviderUrl: string
+    blockExplorer: string
+    protocolExplorer: string
+    defaultNFTContractAddress: Address | null
+    defaultSPGNFTContractAddress: Address | null
+    chain: Chain
+}
 
 // Network configurations
 const networkConfigs: Record<NetworkType, NetworkConfig> = {
@@ -55,34 +47,46 @@ const validateEnvironmentVars = () => {
 }
 
 const getNetwork = (): NetworkType => {
-  const network = process.env.STORY_NETWORK as NetworkType
-  if (network && !(network in networkConfigs)) {
-      throw new Error(`Invalid network: ${network}. Must be one of: ${Object.keys(networkConfigs).join(', ')}`)
-  }
-  return network || 'aeneid'
+    const network = process.env.STORY_NETWORK as NetworkType
+    if (network && !(network in networkConfigs)) {
+        throw new Error(`Invalid network: ${network}. Must be one of: ${Object.keys(networkConfigs).join(', ')}`)
+    }
+    return network || 'aeneid'
 }
 
+// Initialize client configuration
 export const network = getNetwork()
 validateEnvironmentVars()
 
+export const networkInfo = {
+    ...networkConfigs[network],
+    rpcProviderUrl: process.env.RPC_PROVIDER_URL || networkConfigs[network].rpcProviderUrl,
+}
+
+export const account: Account = privateKeyToAccount(`0x${process.env.WALLET_PRIVATE_KEY}` as Address)
 
 export const storyConfig: StoryConfig = {
-  chainId: network,
-  transport: http(networkInfo.rpcProviderUrl),
-  account: process.env.NEXT_PUBLIC_WALLET_ADDRESS as `0x${string}`,
-};
+    account,
+    transport: http(networkInfo.rpcProviderUrl),
+    chainId: network,
+}
 
-// Crear el cliente de Story Protocol
-export const storyClient = StoryClient.newClient(storyConfig);
+export const client = StoryClient.newClient(storyConfig)
 
-// Direcciones de los contratos de Story Protocol
-export const CONTRACT_ADDRESSES = {
-  SPG_NFT: '0x...', // Reemplazar con la dirección correcta del contrato SPG NFT
-  LICENSING: '0x...', // Reemplazar con la dirección correcta del contrato de licencias
-};
+// Export additional useful constants
+export const PROTOCOL_EXPLORER = networkInfo.protocolExplorer
+
+const baseConfig = {
+    chain: networkInfo.chain,
+    transport: http(networkInfo.rpcProviderUrl),
+} as const
+export const publicClient = createPublicClient(baseConfig)
+export const walletClient = createWalletClient({
+    ...baseConfig,
+    account,
+}) as WalletClient
 
 // Configuración de IPFS
 export const IPFS_CONFIG = {
-  pinataApiKey: process.env.NEXT_PUBLIC_PINATA_API_KEY,
-  pinataSecretKey: process.env.NEXT_PUBLIC_PINATA_SECRET_KEY,
-}; 
+  pinataSecretKey: process.env.PINATA_JWT,
+};

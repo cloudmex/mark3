@@ -3,11 +3,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { uploadMetadataToIPFS } from '../utils/ipfs';
-import { client } from '../pages/api/hello';
+import { uploadJSONToIPFS } from '../utils/ipfs';
+import { client } from '../utils/storyConfig';
+import { storyClient } from '../lib/storyProtocol';
 import { IpMetadata } from '@story-protocol/core-sdk';
-import { storyClient, SPGNFTContractAddress } from '../utils/storyConfig';
-import { createCommercialRemixTerms } from '../pages/tools/remixes';
+import { SPGNFTContractAddress, createCommercialRemixTerms } from '../utils/storyUtils';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -52,7 +52,7 @@ export default function RegisterPage() {
         mediaType: 'text/plain',
       });
 
-      const metadataIpfsHash = await uploadMetadataToIPFS(ipMetadata);
+      const metadataIpfsHash = await uploadJSONToIPFS(ipMetadata);
 
       const response = await storyClient.ipAsset.mintAndRegisterIpAssetWithPilTerms({
         spgNftContract: SPGNFTContractAddress,
