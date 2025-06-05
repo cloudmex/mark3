@@ -4,8 +4,10 @@
 import { aeneid, mainnet, StoryClient, StoryConfig } from '@story-protocol/core-sdk'
 import { Chain, createPublicClient, createWalletClient, http, WalletClient } from 'viem'
 import { privateKeyToAccount, Address, Account } from 'viem/accounts'
+import dotenv from 'dotenv'
 
 //Configuración de los tipos de red.
+dotenv.config()
 
 // Network configuration types
 type NetworkType = 'aeneid' | 'mainnet'

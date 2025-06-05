@@ -5,7 +5,6 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { uploadJSONToIPFS } from '../utils/ipfs';
 import { client } from '../utils/storyConfig';
-import { storyClient } from '../lib/storyProtocol';
 import { IpMetadata } from '@story-protocol/core-sdk';
 import { SPGNFTContractAddress, createCommercialRemixTerms } from '../utils/storyUtils';
 
@@ -54,7 +53,7 @@ export default function RegisterPage() {
 
       const metadataIpfsHash = await uploadJSONToIPFS(ipMetadata);
 
-      const response = await storyClient.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+      const response = await client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
         spgNftContract: SPGNFTContractAddress,
         licenseTermsData: [
           {

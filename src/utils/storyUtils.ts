@@ -1,4 +1,3 @@
-import { storyClient } from '../lib/storyProtocol';
 import { networkInfo } from '../utils/storyConfig';
 import { IPAssetClient } from '@story-protocol/core-sdk';
 import { Address, parseEther, zeroAddress } from 'viem'
