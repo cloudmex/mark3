@@ -2,8 +2,7 @@
 
 //Importación de dependencias
 import { aeneid, mainnet, StoryClient, StoryConfig } from '@story-protocol/core-sdk'
-import { Chain, createPublicClient, createWalletClient, http, WalletClient } from 'viem'
-import { privateKeyToAccount, Address, Account } from 'viem/accounts'
+import { Chain, createPublicClient, http, WalletClient, PublicClient, custom } from 'viem'
 import dotenv from 'dotenv'
 
 //Configuración de los tipos de red.
@@ -16,8 +15,8 @@ interface NetworkConfig {
     rpcProviderUrl: string
     blockExplorer: string
     protocolExplorer: string
-    defaultNFTContractAddress: Address | null
-    defaultSPGNFTContractAddress: Address | null
+    defaultNFTContractAddress: `0x${string}` | null
+    defaultSPGNFTContractAddress: `0x${string}` | null
     chain: Chain
 }
 
@@ -27,8 +26,8 @@ const networkConfigs: Record<NetworkType, NetworkConfig> = {
         rpcProviderUrl: 'https://aeneid.storyrpc.io',
         blockExplorer: 'https://aeneid.storyscan.io',
         protocolExplorer: 'https://aeneid.explorer.story.foundation',
-        defaultNFTContractAddress: '0x937bef10ba6fb941ed84b8d249abc76031429a9a' as Address,
-        defaultSPGNFTContractAddress: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc' as Address,
+        defaultNFTContractAddress: '0x937bef10ba6fb941ed84b8d249abc76031429a9a',
+        defaultSPGNFTContractAddress: '0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc',
         chain: aeneid,
     },
     mainnet: {
@@ -36,18 +35,10 @@ const networkConfigs: Record<NetworkType, NetworkConfig> = {
         blockExplorer: 'https://storyscan.io',
         protocolExplorer: 'https://explorer.story.foundation',
         defaultNFTContractAddress: null,
-        defaultSPGNFTContractAddress: '0x98971c660ac20880b60F86Cc3113eBd979eb3aAE' as Address,
+        defaultSPGNFTContractAddress: '0x98971c660ac20880b60F86Cc3113eBd979eb3aAE',
         chain: mainnet,
     },
 } as const
-
-// Helper functions
-const validateEnvironmentVars = () => {
-    console.log(process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY);
-    if (!process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY) {
-        throw new Error('WALLET_PRIVATE_KEY is required in .env file')
-    }
-}
 
 const getNetwork = (): NetworkType => {
     const network = process.env.NEXT_PUBLIC_STORY_NETWORK as NetworkType
@@ -59,35 +50,33 @@ const getNetwork = (): NetworkType => {
 
 // Initialize client configuration
 export const network = getNetwork()
-validateEnvironmentVars()
 
 export const networkInfo = {
     ...networkConfigs[network],
     rpcProviderUrl: process.env.NEXT_PUBLIC_RPC_PROVIDER_URL || networkConfigs[network].rpcProviderUrl,
 }
 
-export const account: Account = privateKeyToAccount(`0x${process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY}` as Address)
-
-export const storyConfig: StoryConfig = {
-    account,
-    transport: http(networkInfo.rpcProviderUrl),
-    chainId: network,
+export function getStoryClient(walletClient: WalletClient): StoryClient {
+    if (!walletClient.account) {
+        throw new Error("WalletClient account is not defined. Make sure the wallet is connected.");
+    }
+    const storyConfig: StoryConfig = {
+        account: walletClient.account,
+        transport: custom(walletClient),
+        chainId: network,
+    }
+    return StoryClient.newClient(storyConfig)
 }
-
-export const client = StoryClient.newClient(storyConfig)
-
-// Export additional useful constants
-export const PROTOCOL_EXPLORER = networkInfo.protocolExplorer
 
 const baseConfig = {
     chain: networkInfo.chain,
     transport: http(networkInfo.rpcProviderUrl),
 } as const
 export const publicClient = createPublicClient(baseConfig)
-export const walletClient = createWalletClient({
-    ...baseConfig,
-    account,
-}) as WalletClient
+
+// Export additional useful constants
+export const PROTOCOL_EXPLORER = networkInfo.protocolExplorer
+
 
 // Configuración de IPFS
 export const IPFS_CONFIG = {

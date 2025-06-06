@@ -7,6 +7,7 @@ import { GeistMono } from "geist/font/mono";
 //Importar RainbowKit para el botón de conexión
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Address, parseEther, zeroAddress } from 'viem'
+import { useAccount } from "wagmi";
 
 
 // import { useTomo } from '@tomo-inc/tomo-web-sdk'; // Importar useTomo
@@ -31,6 +32,7 @@ const StoryProtocolLogo = () => (
 export default function HomePage() {
   // const { openConnectModal, connected, walletState, disconnect } = useTomo(); 
   // const solanaAddress = walletState?.solanaAddress; 
+  const { isConnected } = useAccount();
 
   return (
     <>
@@ -57,13 +59,18 @@ export default function HomePage() {
               <Link href="#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
               <Link href="#story-protocol" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Technology</span></Link>
               <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
-              <Link href="/register" passHref>
-                <span className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer">
+              <Link href={isConnected ? "/register" : "#"} passHref>
+                <span className={`font-semibold px-4 py-2 rounded-lg transition-colors ${
+                  isConnected 
+                    ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
+                    : 'bg-gray-500 cursor-not-allowed'
+                }`}>
                   Register Trademark
                 </span>
               </Link>
               </nav>
           </div>  
+          {/*Elemento usado para conectar la wallet*/}
           <div className="wallet"><ConnectButton /></div>  
         </header>
 
@@ -89,10 +96,13 @@ export default function HomePage() {
               Leverage the power of blockchain for immutable, transparent, and globally verifiable trademark registration. Protect your brand identity in the Web3 era.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <Link href="/register" passHref>
-                <span 
-                  // whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} (ejemplo con framer-motion)
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-10 rounded-lg text-xl transition-colors shadow-2xl cursor-pointer inline-block"
+              <Link href={isConnected ? "/register" : "#"} passHref>
+                <span
+                  className={`font-bold py-4 px-10 rounded-lg text-xl transition-colors shadow-2xl inline-block ${
+                    isConnected 
+                      ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
+                      : 'bg-gray-500 cursor-not-allowed'
+                  }`}
                 >
                   Register Your Trademark
                 </span>
@@ -225,10 +235,13 @@ export default function HomePage() {
               Join Mark3 and give your trademarks the robust protection of blockchain technology. 
               Start building your brand's future today.
             </p>
-            <Link href="/register" passHref>
+            <Link href={isConnected ? "/register" : "#"} passHref>
               <span
-                // whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} (ejemplo con framer-motion)
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-lg text-xl transition-colors shadow-2xl cursor-pointer inline-block"
+                className={`font-bold py-4 px-12 rounded-lg text-xl transition-colors shadow-2xl inline-block ${
+                  isConnected
+                    ? 'bg-green-500 hover:bg-green-600 cursor-pointer'
+                    : 'bg-gray-500 cursor-not-allowed'
+                }`}
               >
                 Register Trademark Now
               </span>

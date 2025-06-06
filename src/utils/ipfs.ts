@@ -1,5 +1,14 @@
 import axios from 'axios';
 import { IPFS_CONFIG } from './storyConfig';
+import bs58 from 'bs58';
+import { Hex, toHex } from 'viem';
+
+export function ipfsHashToBytes32(ipfsHash: string): Hex {
+    const decoded = bs58.decode(ipfsHash);
+    // The actual hash is the last 32 bytes of the decoded buffer
+    const hashBytes = decoded.slice(decoded.length - 32);
+    return toHex(hashBytes);
+}
 
 export const uploadJSONToIPFS = async (jsonData: any) => {
   try {
