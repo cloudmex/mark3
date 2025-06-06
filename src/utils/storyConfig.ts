@@ -43,13 +43,14 @@ const networkConfigs: Record<NetworkType, NetworkConfig> = {
 
 // Helper functions
 const validateEnvironmentVars = () => {
-    if (!process.env.WALLET_PRIVATE_KEY) {
+    console.log(process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY);
+    if (!process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY) {
         throw new Error('WALLET_PRIVATE_KEY is required in .env file')
     }
 }
 
 const getNetwork = (): NetworkType => {
-    const network = process.env.STORY_NETWORK as NetworkType
+    const network = process.env.NEXT_PUBLIC_STORY_NETWORK as NetworkType
     if (network && !(network in networkConfigs)) {
         throw new Error(`Invalid network: ${network}. Must be one of: ${Object.keys(networkConfigs).join(', ')}`)
     }
@@ -62,10 +63,10 @@ validateEnvironmentVars()
 
 export const networkInfo = {
     ...networkConfigs[network],
-    rpcProviderUrl: process.env.RPC_PROVIDER_URL || networkConfigs[network].rpcProviderUrl,
+    rpcProviderUrl: process.env.NEXT_PUBLIC_RPC_PROVIDER_URL || networkConfigs[network].rpcProviderUrl,
 }
 
-export const account: Account = privateKeyToAccount(`0x${process.env.WALLET_PRIVATE_KEY}` as Address)
+export const account: Account = privateKeyToAccount(`0x${process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY}` as Address)
 
 export const storyConfig: StoryConfig = {
     account,
@@ -90,5 +91,5 @@ export const walletClient = createWalletClient({
 
 // Configuración de IPFS
 export const IPFS_CONFIG = {
-  pinataSecretKey: process.env.PINATA_JWT,
+  pinataSecretKey: process.env.NEXT_PUBLIC_PINATA_JWT,
 };
