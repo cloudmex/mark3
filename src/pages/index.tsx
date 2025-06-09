@@ -32,7 +32,7 @@ const StoryProtocolLogo = () => (
 export default function HomePage() {
   // const { openConnectModal, connected, walletState, disconnect } = useTomo(); 
   // const solanaAddress = walletState?.solanaAddress; 
-  const { isConnected } = useAccount();
+ const { isConnected } = useAccount();
 
   return (
     <>
@@ -45,8 +45,11 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" /> {/* Make sure you have a favicon */}
       </Head>
 
+
       <div className={`min-h-screen bg-gray-900 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans overflow-x-hidden`}>
+        
         {/* Header/Nav (Simplified for now) */}
+       
         <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
           <div className="container mx-auto flex justify-between items-center">
             <Link href="/" passHref>
@@ -58,6 +61,7 @@ export default function HomePage() {
               <Link href="#features" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Benefits</span></Link>
               <Link href="#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
               <Link href="#story-protocol" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Technology</span></Link>
+              <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
               <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
               <Link href={isConnected ? "/register" : "#"} passHref>
                 <span className={`font-semibold px-4 py-2 rounded-lg transition-colors ${
@@ -73,8 +77,7 @@ export default function HomePage() {
           {/*Elemento usado para conectar la wallet*/}
           <div className="wallet"><ConnectButton /></div>  
         </header>
-
-                      
+      {/*Se cierra el componente de Header*/}
 
         {/* Hero Section */}
         {/* Sugerencia de Imagen/Animación: Un logo moderno y abstracto (quizás con una 'M' o '3') 

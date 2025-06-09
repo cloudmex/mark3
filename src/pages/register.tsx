@@ -3,14 +3,38 @@ import Head from "next/head";
 import Link from "next/link";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { uploadJSONToIPFS, ipfsHashToBytes32 } from '../utils/ipfs';
+import { uploadJSONToIPFS, ipfsHashToBytes32, uploadFileToIPFS } from '../utils/ipfs';
 import { getStoryClient } from '../utils/storyConfig';
 import { IpMetadata } from '@story-protocol/core-sdk';
 import { SPGNFTContractAddress, createCommercialRemixTerms } from '../utils/storyUtils';
 import { useAccount, useWalletClient } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Address, parseEther, zeroAddress } from 'viem'
+import { Footer } from './portfolio';
 
+const Header = () => {
+  const { isConnected } = useAccount();
+  return (
+    <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link href="/" passHref>
+          <h1 className="text-3xl font-bold text-blue-400 cursor-pointer">
+            Mark<span className="text-green-400">3</span>
+          </h1>
+        </Link>
+        <nav className="space-x-4 flex items-center">
+          <Link href="/#features" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Benefits</span></Link>
+          <Link href="/#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
+          <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
+          <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
+        </nav>
+        <div className="wallet"><ConnectButton /></div>
+      </div>
+    </header>
+  );
+};
+
+Footer();
 
 //Formulario para el registro de IP Assets
 export default function RegisterPage() {
@@ -19,6 +43,7 @@ export default function RegisterPage() {
     description: '',
     author: '',
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -34,6 +59,12 @@ export default function RegisterPage() {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -47,6 +78,12 @@ export default function RegisterPage() {
     setSuccess(null);
 
     try {
+      let imageUrl = '';
+      if (imageFile) {
+        const imageIpfsHash = await uploadFileToIPFS(imageFile);
+        imageUrl = `ipfs://${imageIpfsHash}`;
+      }
+
       const storyClientWithSigner = getStoryClient(walletClient);
       const ipMetadata: IpMetadata = storyClientWithSigner.ipAsset.generateIpMetadata({
         title: formData.name,
@@ -59,11 +96,11 @@ export default function RegisterPage() {
             contributionPercent: 100,
           },
         ],
-        image: '',
+        image: imageUrl,
         imageHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
         mediaUrl: '',
         mediaHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
-        mediaType: 'text/plain',
+        mediaType: imageFile ? imageFile.type : 'text/plain',
       });
 
       const metadataIpfsHash = await uploadJSONToIPFS(ipMetadata);
@@ -98,21 +135,21 @@ export default function RegisterPage() {
   return (
     <div className={`min-h-screen bg-gray-800 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans`}>
       <Head>
-        <title>Registrar IP Asset - Mark3</title>
+        <title>Register IP Asset - Mark3</title>
         <meta name="description" content="Registra tu propiedad intelectual en la blockchain" />
       </Head>
+      
+      <Header />
 
-      {/*Elemento usado para conectar la wallet*/}
-      <main className="container mx-auto px-4 py-16">
-        <div className="flex justify-between items-center mb-8">
-            <Link href="/" passHref>
-                <span className="text-2xl font-bold text-blue-400 cursor-pointer hover:text-blue-300">
-                    &larr; Volver a Inicio
-                </span>
-            </Link>
-            <ConnectButton />
-        </div>
-        <h1 className="text-4xl font-bold text-center mb-8">Registrar IP Asset</h1>
+      <main className="container mx-auto px-4 py-16 pt-32">
+      <div className="text-center mb-12">
+        <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-blue-300 mb-4">
+          Register IP Asset
+          </h2>
+          <p className="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300">
+              Here you can register your intellectual property using Mark3.
+            </p>
+          </div>
 
         {!isConnected && (
             <div className="bg-yellow-500/20 border border-yellow-500 text-yellow-200 px-4 py-3 rounded mb-6 text-center">
@@ -166,6 +203,22 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-6">
+            <label htmlFor="image" className="block text-gray-300 text-sm font-bold mb-2">
+              Imagen de la Marca:
+            </label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              onChange={handleFileChange}
+              className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600"
+              accept="image/*"
+              required
+              disabled={!isConnected}
+            />
+          </div>
+
+          <div className="mb-6">
             <label htmlFor="author" className="block text-gray-300 text-sm font-bold mb-2">
               Autor o Propietario Legal:
             </label>
@@ -192,6 +245,8 @@ export default function RegisterPage() {
           </button>
         </form>
       </main>
+
+      <Footer />
     </div>
   );
 }
