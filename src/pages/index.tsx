@@ -1,8 +1,15 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+//Se importa el ConnectionButton para MetaMask
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+//Importar RainbowKit para el botón de conexión
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Address, parseEther, zeroAddress } from 'viem'
+import { useAccount } from "wagmi";
+
+
 // import { useTomo } from '@tomo-inc/tomo-web-sdk'; // Importar useTomo
 
 // Para animaciones sutiles, considera instalar y usar framer-motion
@@ -25,6 +32,7 @@ const StoryProtocolLogo = () => (
 export default function HomePage() {
   // const { openConnectModal, connected, walletState, disconnect } = useTomo(); 
   // const solanaAddress = walletState?.solanaAddress; 
+ const { isConnected } = useAccount();
 
   return (
     <>
@@ -37,11 +45,11 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" /> {/* Make sure you have a favicon */}
       </Head>
 
-      {/* Aplicamos las fuentes Geist al body o a un contenedor principal si es necesario */}
-      {/* Aquí se asume que las variables CSS --font-geist-sans y --font-geist-mono están disponibles globalmente */}
-      {/* o puedes aplicar geistSans.className y geistMono.className a elementos específicos */}
+
       <div className={`min-h-screen bg-gray-900 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans overflow-x-hidden`}>
+        
         {/* Header/Nav (Simplified for now) */}
+       
         <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
           <div className="container mx-auto flex justify-between items-center">
             <Link href="/" passHref>
@@ -53,15 +61,23 @@ export default function HomePage() {
               <Link href="#features" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Benefits</span></Link>
               <Link href="#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
               <Link href="#story-protocol" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Technology</span></Link>
+              <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
               <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
-              <Link href="/register" passHref>
-                <span className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer">
+              <Link href={isConnected ? "/register" : "#"} passHref>
+                <span className={`font-semibold px-4 py-2 rounded-lg transition-colors ${
+                  isConnected 
+                    ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
+                    : 'bg-gray-500 cursor-not-allowed'
+                }`}>
                   Register Trademark
                 </span>
               </Link>
-            </nav>
-          </div>
+              </nav>
+          </div>  
+          {/*Elemento usado para conectar la wallet*/}
+          <div className="wallet"><ConnectButton /></div>  
         </header>
+      {/*Se cierra el componente de Header*/}
 
         {/* Hero Section */}
         {/* Sugerencia de Imagen/Animación: Un logo moderno y abstracto (quizás con una 'M' o '3') 
@@ -83,10 +99,13 @@ export default function HomePage() {
               Leverage the power of blockchain for immutable, transparent, and globally verifiable trademark registration. Protect your brand identity in the Web3 era.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <Link href="/register" passHref>
-                <span 
-                  // whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} (ejemplo con framer-motion)
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-10 rounded-lg text-xl transition-colors shadow-2xl cursor-pointer inline-block"
+              <Link href={isConnected ? "/register" : "#"} passHref>
+                <span
+                  className={`font-bold py-4 px-10 rounded-lg text-xl transition-colors shadow-2xl inline-block ${
+                    isConnected 
+                      ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
+                      : 'bg-gray-500 cursor-not-allowed'
+                  }`}
                 >
                   Register Your Trademark
                 </span>
@@ -219,10 +238,13 @@ export default function HomePage() {
               Join Mark3 and give your trademarks the robust protection of blockchain technology. 
               Start building your brand's future today.
             </p>
-            <Link href="/register" passHref>
+            <Link href={isConnected ? "/register" : "#"} passHref>
               <span
-                // whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} (ejemplo con framer-motion)
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-lg text-xl transition-colors shadow-2xl cursor-pointer inline-block"
+                className={`font-bold py-4 px-12 rounded-lg text-xl transition-colors shadow-2xl inline-block ${
+                  isConnected
+                    ? 'bg-green-500 hover:bg-green-600 cursor-pointer'
+                    : 'bg-gray-500 cursor-not-allowed'
+                }`}
               >
                 Register Trademark Now
               </span>

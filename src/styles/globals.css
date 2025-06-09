@@ -7,13 +7,6 @@
      cuando se usa la opción 'variable', por lo que no necesitan ser definidas aquí. */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -25,4 +18,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
+}
+
+.wallet{
+  display: flex;  /*Permite alinear el botón a donde se indique.*/
+  /*align-items: right;*/
+  justify-content: right; /*Manda los elementos al final del contenedor flex.*/
+  margin-top: 10px;
 }

@@ -5,7 +5,7 @@ import { GeistMono } from "geist/font/mono";
 
 // Placeholder para el header, igual que en register.tsx
 // Idealmente, este sería un componente importado
-const Header = () => (
+export const Header = () => (
   <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
     <div className="container mx-auto flex justify-between items-center">
       <Link href="/" passHref>
@@ -16,6 +16,7 @@ const Header = () => (
       <nav className="space-x-4 flex items-center">
         <Link href="/#features" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Features</span></Link>
         <Link href="/#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
+        <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
         <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
         <Link href="/register" passHref>
           <span className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer">
@@ -28,7 +29,7 @@ const Header = () => (
 );
 
 // Placeholder para el footer, igual que en register.tsx
-const Footer = () => (
+export const Footer = () => (
   <footer className="py-12 bg-gray-900 border-t border-gray-700">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
       <p className="text-sm">
