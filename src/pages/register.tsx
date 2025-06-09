@@ -241,7 +241,7 @@ export default function RegisterPage() {
               (isLoading || !isConnected) ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
-            {isLoading ? 'Registrando...' : 'Registrar y Firmar Transacción'}
+            {isLoading ? 'Signing up...' : 'Register and Sign Transaction'}
           </button>
         </form>
       </main>
