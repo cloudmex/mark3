@@ -135,8 +135,8 @@ export default function RegisterPage() {
   return (
     <div className={`min-h-screen bg-gray-800 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans`}>
       <Head>
-        <title>Register IP Asset - Mark3</title>
-        <meta name="description" content="Registra tu propiedad intelectual en la blockchain" />
+        <title>Register your IP Asset - Mark3</title>
+        <meta name="description" content="Start the process of registering your intellectual property on the blockchain with Mark3."/>
       </Head>
       
       <Header />
@@ -172,7 +172,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-gray-700/50 p-8 rounded-xl">
           <div className="mb-6">
             <label htmlFor="name" className="block text-gray-300 text-sm font-bold mb-2">
-              Nombre de la Marca o Activo:
+              Name of your Intellectual Property:
             </label>
             <input 
               type="text" 
@@ -188,7 +188,7 @@ export default function RegisterPage() {
 
           <div className="mb-6">
             <label htmlFor="description" className="block text-gray-300 text-sm font-bold mb-2">
-              Descripción:
+              Descripction:
             </label>
             <textarea 
               id="description" 
@@ -204,7 +204,7 @@ export default function RegisterPage() {
 
           <div className="mb-6">
             <label htmlFor="image" className="block text-gray-300 text-sm font-bold mb-2">
-              Imagen de la Marca:
+            Upload File (e.g., PNG, JPG):
             </label>
             <input
               type="file"
@@ -220,7 +220,7 @@ export default function RegisterPage() {
 
           <div className="mb-6">
             <label htmlFor="author" className="block text-gray-300 text-sm font-bold mb-2">
-              Autor o Propietario Legal:
+              Author or Legal Owner:
             </label>
             <input 
               type="text" 
