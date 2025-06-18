@@ -6,8 +6,15 @@ import { Header } from "./portfolio";
 import { useEffect, useState } from "react";
 import { publicClient } from "../utils/storyConfig";
 import { SPGNFTContractAddress } from "../utils/storyUtils";
-import { isAddress } from "viem";
+import { isAddress, zeroAddress } from "viem";
 import { Footer } from "./portfolio";
+import { useAccount, useWalletClient } from 'wagmi';
+import { getStoryClient } from '../utils/storyConfig';
+import { getPublicClient } from '@wagmi/core';
+import { config } from '@/utils/config';
+import { createConfig, http } from 'wagmi';
+import { storyAeneid } from 'wagmi/chains';
+
 
 // Placeholder para el header, idealmente sería un componente importado
 Header(); //Se hace la llamada a la importación del header de portfolio.tsx
@@ -54,17 +61,44 @@ const spgNftContract = {
     ] as const
 }
 
+
+
+//Método para la colección Mark3
+
+
+
+
 export default function GaleriaPage() {
   const [marcas, setMarcas] = useState<MarcaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+
+  const { address, isConnected } = useAccount();
+  const { data: walletClient } = useWalletClient();
+
+  const getTotalNfts = async () => { 
+    if (!isConnected || !walletClient) {
+      setError("Please, connect your wallet to register an IP Asset.");
+      return;
+    }
+
+    const publicClient = config.getClient();
+  
+      const balance = await publicClient.readContract({
+        spgNftContract: "0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF",
+        functionName: totalSupply;
+      });
+      
+  }
+  
 
   useEffect(() => {
       const fetchMarcas = async () => {
           setIsLoading(true);
           try {
               if (!isAddress(SPGNFTContractAddress) || SPGNFTContractAddress === '0x') {
-                  throw new Error("La dirección del contrato SPG NFT no es válida.");
+                  throw new Error("The SPGNFT Contract Address is invalid.");
               }
 
               const totalSupply = await publicClient.readContract({
@@ -89,7 +123,7 @@ export default function GaleriaPage() {
 
                     const metadataResponse = await fetch(metadataUrl);
                     if (!metadataResponse.ok) {
-                        console.warn(`No se pudo obtener metadata para el token ${tokenId}: ${metadataResponse.statusText}`);
+                        console.warn(`Couldn´t obtain metadata for the token.${tokenId}: ${metadataResponse.statusText}`);
                         continue;
                     }
                     const metadata: NftMetadata = await metadataResponse.json();
@@ -105,13 +139,13 @@ export default function GaleriaPage() {
                         metadata: metadata
                     });
                   } catch (e) {
-                      console.warn(`Error procesando el token ${tokenId}:`, e);
+                      console.warn(`Error processing the token ${tokenId}:`, e);
                   }
               }
               setMarcas(fetchedMarcas.reverse());
           } catch (err) {
-              console.error("Error obteniendo las marcas:", err);
-              setError(err instanceof Error ? err.message : "Ocurrió un error desconocido.");
+              console.error("Error getting the brands:", err);
+              setError(err instanceof Error ? err.message : "An unknown error ocurred.");
           } finally {
               setIsLoading(false);
           }
@@ -126,7 +160,7 @@ export default function GaleriaPage() {
         <title>Galería de Marcas - Mark3</title>
         <meta
           name="description"
-          content="Explora todas las marcas y activos intelectuales registrados en la plataforma Mark3."
+          content="Explore all the brands and IP Assets registered in Mark3."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -137,7 +171,7 @@ export default function GaleriaPage() {
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
           <div className="text-center mb-12">
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-blue-300 mb-4">
-              Galería de Marcas Registradas
+               Brands Registered Gallery
             </h2>
             <p className="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300">
               Explora todas las marcas y activos intelectuales que han sido registrados en nuestra plataforma.
@@ -180,7 +214,7 @@ export default function GaleriaPage() {
               <p className="text-xl text-gray-400 mb-4">No hay marcas registradas para mostrar todavía.</p>
               <Link href="/register" passHref>
                 <span className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors shadow-lg">
-                  Registra la Tuya
+                  Register your Trademark
                 </span>
               </Link>
             </div>

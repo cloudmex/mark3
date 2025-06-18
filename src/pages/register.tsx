@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Head from "next/head";
 import Link from "next/link";
 import { GeistSans } from "geist/font/sans";
@@ -47,6 +47,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -68,8 +69,9 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+
     if (!isConnected || !walletClient) {
-      setError("Por favor, conecta tu wallet para registrar un IP Asset.");
+      setError("Please, connect your wallet to register an IP");
       return;
     }
 
@@ -85,6 +87,8 @@ export default function RegisterPage() {
       }
 
       const storyClientWithSigner = getStoryClient(walletClient);
+
+
       const ipMetadata: IpMetadata = storyClientWithSigner.ipAsset.generateIpMetadata({
         title: formData.name,
         description: formData.description,
@@ -108,7 +112,7 @@ export default function RegisterPage() {
       const metadataHashBytes32 = ipfsHashToBytes32(metadataIpfsHash);
 
       const response = await storyClientWithSigner.ipAsset.mintAndRegisterIpAssetWithPilTerms({
-        spgNftContract: SPGNFTContractAddress,
+        spgNftContract: "0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF", //Dirección del contrato para la colección de NFTs
         licenseTermsData: [
           {
             terms: createCommercialRemixTerms({ defaultMintingFee: 1, commercialRevShare: 5 }),
@@ -123,7 +127,12 @@ export default function RegisterPage() {
         txOptions: { waitForTransaction: true },
       });
 
-      setSuccess(`IP Asset registrado exitosamente! ID: ${response.ipId}`);
+      setSuccess(`IP Asset succesfully registered: ${response.ipId}`);
+      setFormData({ name: '', description: '', author: '' });
+      setImageFile(null);
+      if (formRef.current) {
+        formRef.current.reset();
+      }
     } catch (err) {
       console.error(err);
       setError(err instanceof Error ? err.message : 'Error al registrar el IP Asset');
@@ -131,6 +140,33 @@ export default function RegisterPage() {
       setIsLoading(false);
     }
   };
+
+  /*
+  //Método para creación de colección
+  const newCollection = async () => {
+    if (!isConnected || !walletClient) {
+      setError("Please, connect your wallet to register an IP Asset.");
+      return;
+    }
+
+    const storyClientWithSigner = getStoryClient(walletClient);
+
+    const newCollectionResponse = await storyClientWithSigner.nftClient.createNFTCollection({
+      name: "Mark3",
+      symbol: "M3",
+      isPublicMinting: true,
+      mintOpen: true,
+      mintFeeRecipient: zeroAddress,
+      contractURI: "",
+    });
+
+    setTimeout(() => {
+      console.log(
+        `New SPG NFT collection created at transaction hash ${newCollectionResponse.txHash}`
+      );
+      console.log(`NFT contract address: ${newCollectionResponse.spgNftContract}`);
+    }, 10000);
+  }*/
 
   return (
     <div className={`min-h-screen bg-gray-800 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans`}>
@@ -153,7 +189,7 @@ export default function RegisterPage() {
 
         {!isConnected && (
             <div className="bg-yellow-500/20 border border-yellow-500 text-yellow-200 px-4 py-3 rounded mb-6 text-center">
-              Por favor, conecta tu wallet para continuar.
+              Please, connect your wallet to continue.
             </div>
         )}
 
@@ -169,7 +205,7 @@ export default function RegisterPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-gray-700/50 p-8 rounded-xl">
+        <form onSubmit={handleSubmit} ref={formRef} className="max-w-2xl mx-auto bg-gray-700/50 p-8 rounded-xl">
           <div className="mb-6">
             <label htmlFor="name" className="block text-gray-300 text-sm font-bold mb-2">
               Name of your Intellectual Property:
@@ -181,8 +217,8 @@ export default function RegisterPage() {
               value={formData.name}
               onChange={handleInputChange}
               className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
               disabled={!isConnected}
+              required
             />
           </div>
 
@@ -197,8 +233,8 @@ export default function RegisterPage() {
               onChange={handleInputChange}
               rows={4}
               className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
               disabled={!isConnected}
+              required
             />
           </div>
 
@@ -213,8 +249,8 @@ export default function RegisterPage() {
               onChange={handleFileChange}
               className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600"
               accept="image/*"
-              required
               disabled={!isConnected}
+              required
             />
           </div>
 
@@ -229,8 +265,8 @@ export default function RegisterPage() {
               value={formData.author}
               onChange={handleInputChange}
               className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
               disabled={!isConnected}
+              required
             />
           </div>
 
@@ -243,9 +279,23 @@ export default function RegisterPage() {
           >
             {isLoading ? 'Signing up...' : 'Register and Sign Transaction'}
           </button>
+
+            <br></br> <br></br>
+
+                     
         </form>
       </main>
 
+      {/*<button 
+            onClick={ newCollection }
+            disabled={isLoading || !isConnected}
+            className={`w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition-colors ${
+              (isLoading || !isConnected) ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            Create Collection
+          </button>*/}
+          
       <Footer />
     </div>
   );
