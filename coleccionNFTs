@@ -1,0 +1,15 @@
+
+Creación de la colección "Mark3" para mostrar todos los NFTs registrados desde la plataforma.
+# Por favor ingresa el mensaje del commit para tus cambios. Las
+#  líneas que comiencen con '#' serán ignoradas, y un mensaje
+#  vacío aborta el commit.
+#
+# En la rama main
+# Tu rama está adelantada a 'origin/main' por 1 commit.
+#   (usa "git push" para publicar tus commits locales)
+#
+# Cambios a ser confirmados:
+#	modificados:     src/pages/gallery.tsx
+#	modificados:     src/pages/register.tsx
+#	nuevos archivos: src/utils/createCollection/collection.ts
+#
