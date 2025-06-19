@@ -12,12 +12,11 @@ import { useAccount, useWalletClient } from 'wagmi';
 import { getStoryClient } from '../utils/storyConfig';
 import { config } from '@/utils/config';
 
+
+//Endpoint para extraer los NFTs de Mark3.
 const ALCHEMY_API_KEY = '0ACboN5FhM8HVBsTwH-H0y9WGfVQbT9T';
 const BASE_URL = "https://story-aeneid.g.alchemy.com/nft/v3/" + ALCHEMY_API_KEY;
 const CONTRACT_ADDRESS = '0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF';
-
-
-
 
 // Interfaces para tipar los datos
 interface NftMetadata {
@@ -86,36 +85,29 @@ export default function GaleriaPage() {
 
   const fetchMarcas = async () => {
     setIsLoading(true);
-    const totalSupply = await getTotalSupply();
-
-    const metadataList: any[] = [];
-
-    for (let tokenId = 1; tokenId <= totalSupply; tokenId++) {
-      try {
-        const metadata = await getMetadataByTokenId(tokenId);
-        metadataList.push(metadata);
-      } catch (err) {
-        console.error(`Error fetching metadata for token ${tokenId}:`, err);
-      }
-    }
-    setMarcas(metadataList);
+  
     try {
-
-
+      const url = `${BASE_URL}/getNFTsForContract?contractAddress=${CONTRACT_ADDRESS}&withMetadata=true&pageSize=100`;
+      const response = await fetch(url);
+      const data = await response.json();
+  
+      setMarcas(data.nfts || []);
     } catch (err) {
-      console.error("Error getting the brands:", err);
-      setError(err instanceof Error ? err.message : "An unknown error ocurred.");
+      console.error("Error fetching NFTs:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
+  
+ useEffect(() => {
     fetchMarcas();
   }, []);
 
-// Placeholder para el header, idealmente sería un componente importado
-Header(); //Se hace la llamada a la importación del header de portfolio.tsx
+  console.log(marcas);
+
+
+  Header(); //Se hace la llamada a la importación del header de portfolio.tsx
 
 
   return (
@@ -169,10 +161,10 @@ Header(); //Se hace la llamada a la importación del header de portfolio.tsx
 
                       <h3 className="text-xl font-semibold text-green-400 mb-2">{item.name || 'Sin nombre'}</h3>
 
-                      <p className="text-sm text-gray-400 mb-1">Tipo: {item.tokenType}</p>
+                      <p className="text-sm text-gray-400 mb-1">Type: {item.tokenType}</p>
 
                       <p className="text-sm text-gray-400 mb-1">
-                        Registrado:{" "}
+                        Registered:{" "}
                         {item.raw?.metadata?.createdAt
                           ? new Date(Number(item.raw.metadata.createdAt) * 1000).toLocaleDateString()
                           : "No disponible"}
@@ -198,5 +190,3 @@ Header(); //Se hace la llamada a la importación del header de portfolio.tsx
     </>
   );
 }
-
-
