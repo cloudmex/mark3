@@ -141,32 +141,6 @@ export default function RegisterPage() {
     }
   };
 
-  /*
-  //Método para creación de colección
-  const newCollection = async () => {
-    if (!isConnected || !walletClient) {
-      setError("Please, connect your wallet to register an IP Asset.");
-      return;
-    }
-
-    const storyClientWithSigner = getStoryClient(walletClient);
-
-    const newCollectionResponse = await storyClientWithSigner.nftClient.createNFTCollection({
-      name: "Mark3",
-      symbol: "M3",
-      isPublicMinting: true,
-      mintOpen: true,
-      mintFeeRecipient: zeroAddress,
-      contractURI: "",
-    });
-
-    setTimeout(() => {
-      console.log(
-        `New SPG NFT collection created at transaction hash ${newCollectionResponse.txHash}`
-      );
-      console.log(`NFT contract address: ${newCollectionResponse.spgNftContract}`);
-    }, 10000);
-  }*/
 
   return (
     <div className={`min-h-screen bg-gray-800 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans`}>
@@ -180,7 +154,7 @@ export default function RegisterPage() {
       <main className="container mx-auto px-4 py-16 pt-32">
       <div className="text-center mb-12">
         <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-blue-300 mb-4">
-          Register IP Asset
+          Register Your IP Asset
           </h2>
           <p className="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300">
               Here you can register your intellectual property using Mark3.
@@ -278,24 +252,9 @@ export default function RegisterPage() {
             }`}
           >
             {isLoading ? 'Signing up...' : 'Register and Sign Transaction'}
-          </button>
-
-            <br></br> <br></br>
-
-                     
+          </button>                     
         </form>
-      </main>
-
-      {/*<button 
-            onClick={ newCollection }
-            disabled={isLoading || !isConnected}
-            className={`w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition-colors ${
-              (isLoading || !isConnected) ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            Create Collection
-          </button>*/}
-          
+      </main>          
       <Footer />
     </div>
   );

@@ -10,17 +10,14 @@ import { isAddress, zeroAddress } from "viem";
 import { Footer } from "./portfolio";
 import { useAccount, useWalletClient } from 'wagmi';
 import { getStoryClient } from '../utils/storyConfig';
-import { getPublicClient } from '@wagmi/core';
 import { config } from '@/utils/config';
-import { createConfig, http } from 'wagmi';
-import { storyAeneid } from 'wagmi/chains';
+
+const ALCHEMY_API_KEY = '0ACboN5FhM8HVBsTwH-H0y9WGfVQbT9T';
+const BASE_URL = "https://story-aeneid.g.alchemy.com/nft/v3/" + ALCHEMY_API_KEY;
+const CONTRACT_ADDRESS = '0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF';
 
 
-// Placeholder para el header, idealmente sería un componente importado
-Header(); //Se hace la llamada a la importación del header de portfolio.tsx
 
-// Placeholder para el footer
-Footer();
 
 // Interfaces para tipar los datos
 interface NftMetadata {
@@ -42,32 +39,28 @@ interface MarcaItem {
 
 // ABI mínimo para interactuar con el contrato
 const spgNftContract = {
-    address: SPGNFTContractAddress,
-    abi: [
-        {
-            "inputs": [],
-            "name": "totalSupply",
-            "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [ { "internalType": "uint256", "name": "tokenId", "type": "uint256" } ],
-            "name": "tokenURI",
-            "outputs": [ { "internalType": "string", "name": "", "type": "string" } ],
-            "stateMutability": "view",
-            "type": "function"
-        }
-    ] as const
+  address: SPGNFTContractAddress,
+  abi: [
+    {
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
+      "name": "tokenURI",
+      "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ] as const
 }
 
 
 
 //Método para la colección Mark3
-
-
-
-
 export default function GaleriaPage() {
   const [marcas, setMarcas] = useState<MarcaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,87 +70,58 @@ export default function GaleriaPage() {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
 
-  const getTotalNfts = async () => { 
-    if (!isConnected || !walletClient) {
-      setError("Please, connect your wallet to register an IP Asset.");
-      return;
-    }
-
-    const publicClient = config.getClient();
-  
-      const balance = await publicClient.readContract({
-        spgNftContract: "0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF",
-        functionName: totalSupply;
-      });
-      
+  async function getTotalSupply(): Promise<number> {
+    const url = `${BASE_URL}/getContractMetadata?contractAddress=${CONTRACT_ADDRESS}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return Number(data.totalSupply);
   }
-  
+
+  async function getMetadataByTokenId(tokenId: number): Promise<any> {
+    const url = `${BASE_URL}/getNFTMetadata?contractAddress=${CONTRACT_ADDRESS}&tokenId=${tokenId}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  }
+
+  const fetchMarcas = async () => {
+    setIsLoading(true);
+    const totalSupply = await getTotalSupply();
+
+    const metadataList: any[] = [];
+
+    for (let tokenId = 1; tokenId <= totalSupply; tokenId++) {
+      try {
+        const metadata = await getMetadataByTokenId(tokenId);
+        metadataList.push(metadata);
+      } catch (err) {
+        console.error(`Error fetching metadata for token ${tokenId}:`, err);
+      }
+    }
+    setMarcas(metadataList);
+    try {
+
+
+    } catch (err) {
+      console.error("Error getting the brands:", err);
+      setError(err instanceof Error ? err.message : "An unknown error ocurred.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-      const fetchMarcas = async () => {
-          setIsLoading(true);
-          try {
-              if (!isAddress(SPGNFTContractAddress) || SPGNFTContractAddress === '0x') {
-                  throw new Error("The SPGNFT Contract Address is invalid.");
-              }
-
-              const totalSupply = await publicClient.readContract({
-                  ...spgNftContract,
-                  functionName: 'totalSupply'
-              });
-
-              const fetchedMarcas: MarcaItem[] = [];
-              for (let i = 1; i <= Number(totalSupply); i++) {
-                  const tokenId = BigInt(i);
-                  try {
-                    const tokenURI = await publicClient.readContract({
-                        ...spgNftContract,
-                        functionName: 'tokenURI',
-                        args: [tokenId]
-                    });
-                    
-                    const ipfsGateway = "https://ipfs.io/ipfs/";
-                    const metadataUrl = tokenURI.startsWith("ipfs://")
-                      ? `${ipfsGateway}${tokenURI.substring(7)}`
-                      : tokenURI;
-
-                    const metadataResponse = await fetch(metadataUrl);
-                    if (!metadataResponse.ok) {
-                        console.warn(`Couldn´t obtain metadata for the token.${tokenId}: ${metadataResponse.statusText}`);
-                        continue;
-                    }
-                    const metadata: NftMetadata = await metadataResponse.json();
-                    
-                    fetchedMarcas.push({
-                        id: tokenId.toString(),
-                        name: metadata.name || `Marca #${tokenId}`,
-                        type: "Trademark / On-chain",
-                        registrationDate: new Date().toISOString().split('T')[0], // Placeholder
-                        status: "Active",
-                        imageUrl: metadata.image ? (metadata.image.startsWith("ipfs://") ? `${ipfsGateway}${metadata.image.substring(7)}` : metadata.image) : `https://via.placeholder.com/150/808080/FFFFFF?text=No+Image`,
-                        detailsUrl: `/gallery/${tokenId}`,
-                        metadata: metadata
-                    });
-                  } catch (e) {
-                      console.warn(`Error processing the token ${tokenId}:`, e);
-                  }
-              }
-              setMarcas(fetchedMarcas.reverse());
-          } catch (err) {
-              console.error("Error getting the brands:", err);
-              setError(err instanceof Error ? err.message : "An unknown error ocurred.");
-          } finally {
-              setIsLoading(false);
-          }
-      };
-
-      fetchMarcas();
+    fetchMarcas();
   }, []);
+
+// Placeholder para el header, idealmente sería un componente importado
+Header(); //Se hace la llamada a la importación del header de portfolio.tsx
+
 
   return (
     <>
       <Head>
-        <title>Galería de Marcas - Mark3</title>
+        <title> Trademarks Gallery - Mark3</title>
         <meta
           name="description"
           content="Explore all the brands and IP Assets registered in Mark3."
@@ -171,44 +135,53 @@ export default function GaleriaPage() {
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
           <div className="text-center mb-12">
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-blue-300 mb-4">
-               Brands Registered Gallery
+              Trademarks Gallery
             </h2>
             <p className="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300">
-              Explora todas las marcas y activos intelectuales que han sido registrados en nuestra plataforma.
+              Explore all the trademarks and IP Assets that have been registered in our platform.
             </p>
           </div>
 
           {isLoading ? (
             <div className="text-center py-10">
-              <p className="text-xl text-gray-400">Cargando marcas...</p>
+              <p className="text-xl text-gray-400">Loading...</p>
             </div>
           ) : error ? (
             <div className="text-center py-10 text-red-400">
-              <p>Error al cargar las marcas: {error}</p>
+              <p>Error loading trademarks: {error}</p>
             </div>
           ) : marcas.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {marcas.map((item) => (
-                <div key={item.id} className="bg-gray-700/50 p-6 rounded-xl shadow-xl flex flex-col justify-between transform hover:scale-105 transition-transform duration-300">
-                  <div>
-                    {item.imageUrl && (
-                      <img src={item.imageUrl} alt={item.name} className="rounded-md mb-4 w-full h-48 object-cover bg-gray-600"/>
-                    )}
-                    <h3 className="text-xl font-semibold text-green-400 mb-2">{item.name}</h3>
-                    <p className="text-sm text-gray-400 mb-1">Tipo: {item.type}</p>
-                    <p className="text-sm text-gray-400 mb-1">Registrado: {item.registrationDate}</p>
-                    <p className={`text-sm font-semibold ${item.status === 'Active' ? 'text-green-500' : 'text-yellow-500'} mb-4`}>
-                      Estado: {item.status}
-                    </p>
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {marcas.map((item: any) => (
+                  <div
+                    key={item.tokenId}
+                    className="bg-gray-700/50 p-6 rounded-xl shadow-xl flex flex-col justify-between transform hover:scale-105 transition-transform duration-300"
+                  >
+                    <div>
+                      {item.image?.cachedUrl && (
+                        <img
+                          src={item.image.cachedUrl}
+                          alt={item.name}
+                          className="rounded-md mb-4 w-full h-48 object-cover bg-gray-600"
+                        />
+                      )}
+
+                      <h3 className="text-xl font-semibold text-green-400 mb-2">{item.name || 'Sin nombre'}</h3>
+
+                      <p className="text-sm text-gray-400 mb-1">Tipo: {item.tokenType}</p>
+
+                      <p className="text-sm text-gray-400 mb-1">
+                        Registrado:{" "}
+                        {item.raw?.metadata?.createdAt
+                          ? new Date(Number(item.raw.metadata.createdAt) * 1000).toLocaleDateString()
+                          : "No disponible"}
+                      </p>
+                    </div>
                   </div>
-                  <Link href={item.detailsUrl} passHref>
-                    <span className="block text-center mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors cursor-pointer w-full">
-                      Ver Detalles
-                    </span>
-                  </Link>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="text-center py-10">
               <p className="text-xl text-gray-400 mb-4">No hay marcas registradas para mostrar todavía.</p>
@@ -219,8 +192,11 @@ export default function GaleriaPage() {
               </Link>
             </div>
           )}
-        </main>
-      </div>
+        </main >
+        <Footer></Footer>
+      </div >
     </>
   );
-} 
+}
+
+
