@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IPFS_CONFIG } from '../../utils/storyConfig';
+import { IPFS_CONFIG } from './storyConfig';
 
 // Función para subir JSON a IPFS usando Pinata
 export const uploadJSONToIPFS = async (jsonData: any) => {
