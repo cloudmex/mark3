@@ -18,21 +18,11 @@ const BASE_URL = `https://story-aeneid.g.alchemy.com/nft/v3/${ALCHEMY_API_KEY}`;
 //Dirección de contrato de la colección de los NFTs.
 const CONTRACT_ADDRESS = '0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF';
 
-
-
-// Placeholder para el header, igual que en register.tsx
-// Idealmente, este sería un componente importado
-
-
-
-//Se muestran los IP Assets creados por el usuario.
-export default function PortfolioPage() {
-
-  const { address, isConnected } = useAccount();
-
-
-  const Header = () => (
-
+// Componente Header exportado para uso en otros archivos
+export const Header = () => {
+  const { isConnected } = useAccount();
+  
+  return (
     <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" passHref>
@@ -60,7 +50,12 @@ export default function PortfolioPage() {
             </div>  
     </header>
   );
+};
 
+//Se muestran los IP Assets creados por el usuario.
+export default function PortfolioPage() {
+
+  const { address, isConnected } = useAccount();
 
   const [userNFTs, setUserNFTs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
