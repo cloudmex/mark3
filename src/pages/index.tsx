@@ -63,6 +63,7 @@ export default function HomePage() {
               <Link href="#story-protocol" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Technology</span></Link>
               <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
               <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
+              <Link href="/ai-chat" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">AI Chat</span></Link>
               <Link href={isConnected ? "/register" : "#"} passHref>
                 <span className={`font-semibold px-4 py-2 rounded-lg transition-colors ${
                   isConnected 
