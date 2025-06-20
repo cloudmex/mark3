@@ -1,0 +1,87 @@
+import { Address, parseEther, zeroAddress } from 'viem'
+import { RoyaltyPolicyLRP } from '../utils/storyUtils'
+import { getStoryClient } from '../utils/storyConfig'
+import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
+import { useState, useRef } from 'react';
+import { convertRoyaltyPercentToTokens, createCommercialRemixTerms, SPGNFTContractAddress } from '../utils/storyUtils'
+import { aeneid, IPAssetClient, mainnet, NftClient, StoryClient, StoryConfig } from '@story-protocol/core-sdk'
+import { Chain, createPublicClient, http, WalletClient, PublicClient, custom, getAddress } from 'viem'
+import { useAccount, useWalletClient } from 'wagmi';
+import { getAccount } from 'wagmi/actions';
+
+// This is Ippy (Story's mascot) on Aeneid testnet. The license terms
+// specify 1 $WIP mint fee and a 5% commercial rev share.
+
+//Contrato con el método "claimAllRevenue"
+const PARENT_IP_ID: Address = '0x641E638e8FCA4d4844F509630B34c9D524d40BE5'
+
+// This is a random derivative asset of Ippy for testing.
+const CHILD_IP_ID: Address = '0x11eE9193F380c117a7031D8d93FEe0b440DEeFaE'
+
+const main = async function () {
+    // 1. Pay Royalty
+    //
+    // You will be paying for this royalty using $WIP:
+    // https://aeneid.storyscan.xyz/address/0x1514000000000000000000000000000000000000
+    // If you don't have enough $WIP, the function will auto
+    // wrap an equivalent amount of $IP into $WIP for you.
+    //
+    // Docs: https://docs.story.foundation/sdk-reference/royalty#payroyaltyonbehalf
+
+
+    const { address, isConnected } = useAccount();
+    const { data: walletClient } = useWalletClient();
+    const [error, setError] = useState<string | null>(null);
+
+
+
+    if (!isConnected || !walletClient) {
+        setError("Please, connect your wallet to register an IP");
+        return;
+      }
+
+    // FOR SETUP: Create a new IP Asset we can use
+    const storyClientWithSigner = getStoryClient(walletClient);
+
+
+
+    const payRoyalty = await storyClientWithSigner.royalty.payRoyaltyOnBehalf({
+        receiverIpId: CHILD_IP_ID,
+        payerIpId: zeroAddress,
+        token: WIP_TOKEN_ADDRESS,
+        amount: parseEther('2'), // 2 $WIP
+    })
+    console.log('Paid royalty:', {
+        'Transaction Hash': payRoyalty.txHash,
+    })
+
+    // 2. Child Claim Revenue
+    //
+    // Note that claiming revenue is permissionless. Anyone can claim
+    // revenue for any asset.
+    //
+    // Docs: https://docs.story.foundation/sdk-reference/royalty#claimallrevenue
+    const childClaimRevenue = await storyClientWithSigner.royalty.claimAllRevenue({
+        ancestorIpId: CHILD_IP_ID,
+        claimer: CHILD_IP_ID,
+        currencyTokens: [WIP_TOKEN_ADDRESS],
+        childIpIds: [],
+        royaltyPolicies: [],
+    })
+    console.log('Child claimed revenue:', childClaimRevenue.claimedTokens)
+
+    // 3. Parent Claim Revenue
+    //
+    // Docs: https://docs.story.foundation/sdk-reference/royalty#claimallrevenue
+    const parentClaimRevenue = await storyClientWithSigner.royalty.claimAllRevenue({
+        ancestorIpId: PARENT_IP_ID,
+        claimer: PARENT_IP_ID,
+        currencyTokens: [WIP_TOKEN_ADDRESS],
+        childIpIds: [CHILD_IP_ID],
+        royaltyPolicies: [RoyaltyPolicyLRP],
+    })
+    console.log('Parent claimed revenue receipt:', parentClaimRevenue.claimedTokens)
+
+}
+
+main()

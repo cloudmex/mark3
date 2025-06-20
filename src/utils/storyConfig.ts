@@ -82,3 +82,5 @@ export const PROTOCOL_EXPLORER = networkInfo.protocolExplorer
 export const IPFS_CONFIG = {
   pinataSecretKey: process.env.NEXT_PUBLIC_PINATA_JWT,
 };
+
+
