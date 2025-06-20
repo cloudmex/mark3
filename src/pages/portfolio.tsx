@@ -9,9 +9,11 @@ import { isAddress, zeroAddress } from "viem";
 import { useAccount, useWalletClient } from 'wagmi';
 import { getStoryClient } from '../utils/storyConfig';
 import { config } from '@/utils/config';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
 
 //Endpoint para extraer los NFTs.
-const ALCHEMY_API_KEY = '0ACboN5FhM8HVBsTwH-H0y9WGfVQbT9T';
+const ALCHEMY_API_KEY = '0';
 const BASE_URL = `https://story-aeneid.g.alchemy.com/nft/v3/${ALCHEMY_API_KEY}`;
 //Dirección de contrato de la colección de los NFTs.
 const CONTRACT_ADDRESS = '0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF';
@@ -20,33 +22,46 @@ const CONTRACT_ADDRESS = '0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF';
 
 // Placeholder para el header, igual que en register.tsx
 // Idealmente, este sería un componente importado
-export const Header = () => (
-  <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
-    <div className="container mx-auto flex justify-between items-center">
-      <Link href="/" passHref>
-        <h1 className="text-3xl font-bold text-blue-400 cursor-pointer">
-          Mark<span className="text-green-400">3</span>
-        </h1>
-      </Link>
-      <nav className="space-x-4 flex items-center">
-        <Link href="/#features" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Features</span></Link>
-        <Link href="/#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
-        <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
-        <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
-        <Link href="/register" passHref>
-          <span className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer">
-            Register
-          </span>
-        </Link>
-      </nav>
-    </div>
-  </header>
-);
+
 
 
 //Se muestran los IP Assets creados por el usuario.
 export default function PortfolioPage() {
+
   const { address, isConnected } = useAccount();
+
+
+  const Header = () => (
+
+    <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link href="/" passHref>
+          <h1 className="text-3xl font-bold text-blue-400 cursor-pointer">
+            Mark<span className="text-green-400">3</span>
+          </h1>
+        </Link>
+        <nav className="space-x-4 flex items-center">
+          <Link href="/#features" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Features</span></Link>
+          <Link href="/#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
+          <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
+          <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
+                  <Link href={isConnected ? "/register" : "#"} passHref>
+                  <span className={`font-semibold px-4 py-2 rounded-lg transition-colors ${
+                    isConnected 
+                      ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
+                      : 'bg-gray-500 cursor-not-allowed'
+                  }`}>
+                    Register Trademark
+                  </span>
+                </Link>
+                </nav>
+                {/*Elemento usado para conectar la wallet*/}
+            <div className="wallet"><ConnectButton /></div> 
+            </div>  
+    </header>
+  );
+
+
   const [userNFTs, setUserNFTs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

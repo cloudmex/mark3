@@ -15,14 +15,16 @@ export const createCommercialRemixTerms = ({
     transferable: true,
     royaltyPolicy: '0x...', // Reemplazar con la dirección correcta de la política de regalías
     commercialUse: true,
+    defaultMintingFee: BigInt(defaultMintingFee),
     commercialAttribution: true,
-    commercialRevShare: commercialRevShare,
-    commercialRevCeiling: 100,
-    derivativeUse: true,
-    derivativeAttribution: true,
-    derivativeRevShare: 5,
-    derivativeRevCeiling: 100,
-    defaultMintingFee: defaultMintingFee,
-    expiration: 0, // 0 significa sin expiración
+    commercializerChecker: '0x...',
+    commercializerCheckerData: '0x...',
+    derivativesAllowed: true,
+    derivativesAttribution: true,
+    commercialRevShare: 0,
+    commercialRevCeiling: 0n,
+    derivativesReciprocal: true,
+    derivativeRevCeiling: 0n,
+    expiration: 0n, // 0 significa sin expiración
   };
 }; 

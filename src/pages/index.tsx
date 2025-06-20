@@ -30,9 +30,8 @@ const StoryProtocolLogo = () => (
 );
 
 export default function HomePage() {
-  // const { openConnectModal, connected, walletState, disconnect } = useTomo(); 
-  // const solanaAddress = walletState?.solanaAddress; 
- const { isConnected } = useAccount();
+
+  const { isConnected } = useAccount();
 
   return (
     <>

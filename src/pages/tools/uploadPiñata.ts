@@ -10,8 +10,7 @@ export const uploadJSONToIPFS = async (jsonData: any) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          pinata_api_key: IPFS_CONFIG.pinataApiKey,
-          pinata_secret_api_key: IPFS_CONFIG.pinataSecretKey,
+          Authorization: `Bearer ${IPFS_CONFIG.pinataSecretKey}`,
         },
       }
     );

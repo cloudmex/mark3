@@ -2,7 +2,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Header } from "./portfolio";
 import { useEffect, useState } from "react";
 import { publicClient } from "../utils/storyConfig";
 import { SPGNFTContractAddress } from "../utils/storyUtils";
@@ -11,6 +10,8 @@ import { Footer } from "./portfolio";
 import { useAccount, useWalletClient } from 'wagmi';
 import { getStoryClient } from '../utils/storyConfig';
 import { config } from '@/utils/config';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
 
 
 //Endpoint para extraer los NFTs de Mark3.
@@ -61,6 +62,38 @@ const spgNftContract = {
 
 //Método para la colección Mark3
 export default function GaleriaPage() {
+
+  const Header = () => (
+
+    <header className="py-6 px-4 sm:px-6 lg:px-8 bg-gray-900/80 backdrop-blur-md shadow-lg fixed w-full z-50">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link href="/" passHref>
+          <h1 className="text-3xl font-bold text-blue-400 cursor-pointer">
+            Mark<span className="text-green-400">3</span>
+          </h1>
+        </Link>
+        <nav className="space-x-4 flex items-center">
+          <Link href="/#features" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Features</span></Link>
+          <Link href="/#how-it-works" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">How It Works</span></Link>
+          <Link href="/gallery" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Gallery</span></Link>
+          <Link href="/portfolio" passHref><span className="hover:text-blue-300 transition-colors cursor-pointer">Portfolio</span></Link>
+                  <Link href={isConnected ? "/register" : "#"} passHref>
+                  <span className={`font-semibold px-4 py-2 rounded-lg transition-colors ${
+                    isConnected 
+                      ? 'bg-blue-500 hover:bg-blue-600 cursor-pointer' 
+                      : 'bg-gray-500 cursor-not-allowed'
+                  }`}>
+                    Register Trademark
+                  </span>
+                </Link>
+                </nav>
+                {/*Elemento usado para conectar la wallet*/}
+            <div className="wallet"><ConnectButton /></div> 
+            </div>  
+    </header>
+  );
+
+
   const [marcas, setMarcas] = useState<MarcaItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,7 +140,6 @@ export default function GaleriaPage() {
   console.log(marcas);
 
 
-  Header(); //Se hace la llamada a la importación del header de portfolio.tsx
 
 
   return (
@@ -122,10 +154,11 @@ export default function GaleriaPage() {
       </Head>
 
       <div className={`min-h-screen bg-gray-800 text-white ${GeistSans.variable} ${GeistMono.variable} font-sans flex flex-col`}>
-        <Header />
+        
+        <Header/>
 
         <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12"> 
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-blue-300 mb-4">
               Trademarks Gallery
             </h2>
