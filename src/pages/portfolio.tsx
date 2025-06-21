@@ -13,7 +13,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 
 //Endpoint para extraer los NFTs.
-const ALCHEMY_API_KEY = '0';
+const ALCHEMY_API_KEY = '0ACboN5FhM8HVBsTwH-H0y9WGfVQbT9T';
 const BASE_URL = `https://story-aeneid.g.alchemy.com/nft/v3/${ALCHEMY_API_KEY}`;
 //Dirección de contrato de la colección de los NFTs.
 const CONTRACT_ADDRESS = '0xa199Ee444d36674a0c7e27b79bc44ED546D50EbF';
