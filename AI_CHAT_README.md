@@ -27,7 +27,7 @@ The AI Chat page is an integrated functionality in Mark3 that allows users to in
 2. Add your OpenAI API key:
 
 ```bash
-OPENAI_API_KEY=your_openai_api_key_here
+NEXT_PUBLIC_OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 ### 3. Install Dependencies
@@ -106,7 +106,7 @@ You can customize the assistant's behavior by modifying the system prompt in `sr
 
 ### Error: "OpenAI API key not configured"
 - Verify that the `.env.local` file exists
-- Make sure `OPENAI_API_KEY` is correctly configured
+- Make sure `NEXT_PUBLIC_OPENAI_API_KEY` is correctly configured
 - Restart the development server
 
 ### Error: "Server response error"

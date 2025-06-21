@@ -20,19 +20,19 @@ const checkEnvironmentVariables = (): StatusItem[] => {
   const checks: StatusItem[] = [];
 
   // Verificar OpenAI API Key
-  if (process.env.OPENAI_API_KEY) {
+  if (process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
     checks.push({
       name: 'OpenAI API Key',
       status: 'success',
       message: 'Configurada correctamente',
-      details: `Key: ${process.env.OPENAI_API_KEY.substring(0, 8)}...`
+      details: `Key: ${process.env.NEXT_PUBLIC_OPENAI_API_KEY.substring(0, 8)}...`
     });
   } else {
     checks.push({
       name: 'OpenAI API Key',
       status: 'error',
       message: 'No configurada',
-      details: 'Agrega OPENAI_API_KEY a tu archivo .env'
+      details: 'Agrega NEXT_PUBLIC_OPENAI_API_KEY a tu archivo .env'
     });
   }
 
@@ -104,10 +104,10 @@ const checkConnections = async (): Promise<StatusItem[]> => {
   const checks: StatusItem[] = [];
 
   // Verificar conexión con OpenAI
-  if (process.env.OPENAI_API_KEY) {
+  if (process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
     try {
       const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
+        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
       });
       
       // Hacer una llamada de prueba simple
@@ -132,7 +132,7 @@ const checkConnections = async (): Promise<StatusItem[]> => {
       name: 'Conexión OpenAI',
       status: 'error',
       message: 'No se puede verificar',
-      details: 'OPENAI_API_KEY no está configurada'
+      details: 'NEXT_PUBLIC_OPENAI_API_KEY no está configurada'
     });
   }
 

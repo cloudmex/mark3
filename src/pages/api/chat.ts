@@ -17,12 +17,12 @@ export default async function handler(
       return res.status(400).json({ error: 'Mensaje requerido' });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
       return res.status(500).json({ error: 'API key de OpenAI no configurada' });
     }
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     });
 
     // Función para detectar si el usuario quiere ver sus NFTs
