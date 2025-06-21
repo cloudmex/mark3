@@ -19,7 +19,7 @@ O usando el enlace "Status" en la barra de navegación de la aplicación.
 
 La página verifica las siguientes variables de entorno:
 
-- **OPENAI_API_KEY**: Clave de API de OpenAI para el chat AI
+- **NEXT_PUBLIC_OPENAI_API_KEY**: Clave de API de OpenAI para el chat AI
 - **NEXT_PUBLIC_PINATA_JWT**: Token JWT de Pinata para almacenamiento IPFS
 - **NEXT_PUBLIC_STORY_NETWORK**: Red de Story Protocol (aeneid/mainnet)
 - **NEXT_PUBLIC_RPC_PROVIDER_URL**: URL personalizada del RPC (opcional)
@@ -63,7 +63,7 @@ Para que todos los servicios funcionen correctamente, asegúrate de tener config
 
 ```env
 # OpenAI API Key
-OPENAI_API_KEY=tu_api_key_de_openai
+NEXT_PUBLIC_OPENAI_API_KEY=tu_api_key_de_openai
 
 # Pinata JWT Token
 NEXT_PUBLIC_PINATA_JWT=tu_jwt_de_pinata
@@ -99,9 +99,9 @@ NODE_ENV=development
 
 ## Solución de Problemas
 
-### Error: "OPENAI_API_KEY no está configurada"
+### Error: "NEXT_PUBLIC_OPENAI_API_KEY no está configurada"
 - Verifica que tengas un archivo `.env` en la raíz del proyecto
-- Asegúrate de que la variable `OPENAI_API_KEY` esté definida
+- Asegúrate de que la variable `NEXT_PUBLIC_OPENAI_API_KEY` esté definida
 - Reinicia el servidor después de agregar variables de entorno
 
 ### Error: "Conexión OpenAI - Error de conexión"
