@@ -18,11 +18,7 @@ const configWagmi = getDefaultConfig({
   ssr: true, // If your dApp uses server side rendering (SSR)
 });
 
-
-
 const queryClient = new QueryClient();
-
-
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -34,17 +30,14 @@ export default function App({ Component, pageProps }: AppProps) {
     // <Component {...pageProps} />
     // </TomoContextProvider>
 
-
     <WagmiProvider config={configWagmi}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <Component {...pageProps} /> 
           {/* Your App */}
-     </RainbowKitProvider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
-
-
   );
 }
 
